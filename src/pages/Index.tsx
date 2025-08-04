@@ -1,14 +1,47 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from 'react';
+import LandingPage from '@/components/LandingPage';
+import LoginPage from '@/components/LoginPage';
+import RegisterPage from '@/components/RegisterPage';
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [currentPage, setCurrentPage] = useState('landing');
+
+  // Handle navigation based on hash
+  const handleNavigation = (page: string) => {
+    setCurrentPage(page);
+    window.location.hash = page;
+  };
+
+  // Listen to hash changes for navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.substring(1);
+      if (hash === 'login' || hash === 'register') {
+        setCurrentPage(hash);
+      } else {
+        setCurrentPage('landing');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange(); // Check initial hash
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Render current page
+  const renderCurrentPage = () => {
+    switch (currentPage) {
+      case 'login':
+        return <LoginPage />;
+      case 'register':
+        return <RegisterPage />;
+      default:
+        return <LandingPage />;
+    }
+  };
+
+  return renderCurrentPage();
 };
 
 export default Index;
